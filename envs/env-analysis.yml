@@ -1,0 +1,24 @@
+# The light side: probe, response matrix, IRT, analysis.
+#
+# This environment must stay importable and installable with no embedder present. If adding a
+# dependency here because some model needs it, that dependency belongs in that model's env
+# instead (plan section 2.1).
+name: scfm-irt-analysis
+channels: [conda-forge]
+dependencies:
+  - python=3.11
+  - numpy>=1.24
+  - pandas>=2.0
+  - pyarrow>=14
+  - scikit-learn>=1.3
+  - matplotlib>=3.7
+  - pyyaml>=6.0
+  - scanpy>=1.10 # h5ad IO for the data module
+  - anndata>=0.10
+  - pytest>=8.0
+  - pip
+  - pip:
+      - py-irt>=0.6 # Pyro-based Bayesian IRT (the default estimator)
+      - numpyro>=0.15 # explanatory / GLMM / aggregated variants
+      - ruff>=0.5
+      - mypy>=1.10

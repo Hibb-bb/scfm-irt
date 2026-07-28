@@ -1,0 +1,29 @@
+# Phase 7 robustness run: what makes a cell hard to annotate?
+#
+# Difficulty is modeled as b_i = w'x_i + eps_i instead of being freely estimated per cell. Two
+# payoffs: far fewer effective parameters (which this regime badly needs), and the coefficients
+# are themselves a result.
+run_name: explanatory_v1
+seed: 0
+
+datasets: [zheng68k, hpancreas, immune_human, lung_atlas]
+
+split:
+  scheme: cross_donor
+  test_frac: 0.2
+
+embedders: [dev_pca, uce, scgpt, geneformer, cell_jepa]
+
+probe:
+  penalty: l2
+  C: null
+
+irt:
+  model: 1pl
+  method: numpyro # required for the explanatory model
+  item_granularity: cell
+  item_covariates: [n_classes, log_depth, cell_type, dataset]
+  n_steps: 4000
+
+outputs_dir: runs
+cache_dir: cache/embeddings

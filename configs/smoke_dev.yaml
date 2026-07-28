@@ -1,0 +1,25 @@
+# Phase 2 smoke test: the entire downstream path on one dataset with the dependency-free
+# embedder. No GPU, no checkpoints, no isolated envs. This is what CI runs.
+run_name: smoke_dev
+seed: 0
+
+datasets: [zheng68k]
+
+split:
+  scheme: stratified
+  test_frac: 0.2
+
+embedders: [dev_pca, dev_random]
+
+probe:
+  penalty: l2
+  C: 1.0 # fixed, to keep the smoke run fast
+
+irt:
+  model: 1pl
+  method: mle_autodiff # the reference estimator; no pyro/torch-GPU needed
+  item_granularity: cell
+  n_steps: 200
+
+outputs_dir: runs
+cache_dir: cache/embeddings

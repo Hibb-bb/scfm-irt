@@ -1,0 +1,21 @@
+# Template for one embedder's isolated environment. Copy, rename, and pin hard.
+#
+# Rules:
+#   - Pin exact versions from the model's own repo/docs. "Latest" breaks silently.
+#   - Never add analysis-side packages here, and never add these packages to env-analysis.yml.
+#   - This env only ever runs scripts/extract_embeddings.py.
+name: scfm-irt-MODELNAME
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.10 # match what the model's repo supports, not what is newest
+  - pytorch=2.* # pin to the version the checkpoint was released against
+  - pytorch-cuda=12.1
+  - numpy
+  - pandas
+  - scanpy
+  - anndata
+  - pip
+  - pip:
+      # - git+https://github.com/ORG/MODEL@<commit-sha>   # pin a commit, not a branch
+      # - transformers==<exact>                            # tokenizer versions matter here
+      - -e ..[sc] # scfm_irt itself, for the embedder interface and artifact IO
