@@ -1,0 +1,7 @@
+[validation] fitted s=1.144, r_tune=0.327 (r·T≈4s)
+[validation] Fig 2 — synthetic drift on real b_i (equal N, r tuned)...
+  fixed         ρ=0.966  V/|B|=0.037  seed_v=0.0365
+  recalibrate   ρ=0.957  V/|B|=0.038  seed_v=0.0507
+  full          ρ=0.806  V/|B|=0.162  seed_v=0.0510
+[validation] Fig 3 — κ vs r sweep on real bank...
+[validation] done -> /gpfs/projects/p32593/scfm-irt/sim/results/validation/survival_curve.md

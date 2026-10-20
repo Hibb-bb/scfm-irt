@@ -10,25 +10,16 @@ grep -rn "TODO(phase" src/ scripts/
 
 | Phase | What | Status |
 |---|---|---|
-| 0 | Scaffolding, config system, dataset registry, `describe` | skeleton — registry seeded with 4 datasets, paths/URLs and expected dims still to fill in |
-| 1 | Loaders, split schemes, label harmonization | not started |
-| 2 | Full downstream path on `DevEmbedder` | not started |
-| 3 | Probe + response matrix | response schema, `to_matrix`, and the orientation guard done; probe not started |
-| 4 | IRT core + synthetic recovery — **the gate** | response curves, information functions, and the simulator done; all three estimators stubbed |
-| 5 | One real embedder end-to-end | not started |
-| 6 | Scale out to all models x datasets | not started |
-| 7 | Explanatory / aggregated / MIRT robustness | not started |
-| 8 | Reporting and figures | not started |
+| 0 | Scaffolding, config system, dataset registry, `describe` | done for smoke + `pbmc3k` download |
+| 1 | Loaders, split schemes, label harmonization | done — harmonize is identity until `_LABEL_MAP` is populated |
+| 2 | Full downstream path on `DevEmbedder` | done — `slurm/smoke_dev.slurm` |
+| 3 | Probe + response matrix | done |
+| 4 | IRT core + synthetic recovery — **the gate** | done — `mle_autodiff` + mean-field `bayes_variational` (py-irt optional on Py&lt;3.12) |
+| 5 | One real embedder end-to-end | done — UCE on PBMC3k (`runs/uce_pbmc3k_v1`) |
+| 6 | Scale out to all models x datasets | in progress — PBMC3k 4-model ranking done; atlas + SCimilarity queued |
 
-## Suggested order
-
-Phases 0–2 are the unglamorous part and everything else depends on them. The `DevEmbedder`
-path exists specifically so the whole pipeline can be debugged before any checkpoint is
-downloaded — bring that up end-to-end before touching a real model.
-
-Phase 4 is the gate. Until synthetic recovery passes for both estimators, a real ability
-ranking cannot be distinguished from a plausible-looking bug, and the most likely bug
-(persons/items transposed) produces output that looks entirely reasonable.
+| 7 | Explanatory / aggregated / MIRT robustness | aggregated path in autodiff; numpyro still TODO |
+| 8 | Reporting and figures | minimal report; Wright/ICC/fit-stats still TODO |
 
 ## Open questions
 

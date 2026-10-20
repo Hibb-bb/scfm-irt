@@ -41,6 +41,9 @@ class IRTConfig:
     # fit of MATH.md section 11.1, which predicts difficulty from cell covariates.
     item_covariates: list[str] | None = None
     n_steps: int = 2000
+    # Leave-one-model-out: calibrate item difficulties without the scored model (≥3 models).
+    loo_calibration: bool = True
+    loo_n_steps: int = 400
 
 
 @dataclass(frozen=True)

@@ -1,0 +1,20 @@
+# Isolated env for scGPT. Never mix with other embedders.
+name: scfm-irt-scgpt
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scanpy
+  - anndata
+  - pytorch::pytorch=2.1.*
+  - pytorch::pytorch-cuda=12.1
+  - pip:
+      - scgpt
+      - gdown
+      - tqdm
+      - pyyaml
+      - -e ..[sc]
+      # flash-attn is optional; SCGPTEmbedder falls back to use_fast_transformer=False

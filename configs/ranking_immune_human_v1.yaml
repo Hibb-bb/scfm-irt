@@ -1,0 +1,26 @@
+# Atlas ranking: scIB immune human (32k cells, 16 types), cross-donor split.
+# Harder than PBMC3k — batch effects across studies, less ceiling on rare types.
+run_name: ranking_immune_human_v1
+seed: 0
+
+datasets: [immune_human]
+
+split:
+  scheme: cross_donor
+  test_frac: 0.2
+
+embedders: [dev_pca, uce, scgpt, geneformer]
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  n_steps: 2000
+
+outputs_dir: runs
+cache_dir: cache/embeddings

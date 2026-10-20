@@ -1,0 +1,24 @@
+# Isolated env for Geneformer. Never mix with other embedders.
+name: scfm-irt-geneformer
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scanpy
+  - anndata
+  - pytorch::pytorch=2.1.*
+  - pytorch::pytorch-cuda=12.1
+  - pip:
+      - transformers
+      - datasets
+      - huggingface_hub
+      - mygene
+      - loompy
+      - tqdm
+      - pyyaml
+      - -e ..[sc]
+      # Geneformer itself is installed from the downloaded HF repo:
+      #   pip install -e cache/geneformer_workdir/Geneformer

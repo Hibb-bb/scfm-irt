@@ -1,0 +1,20 @@
+# Isolated env for UCE (Universal Cell Embeddings). Never mix with other embedders.
+name: scfm-irt-uce
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scanpy
+  - anndata
+  - pytorch::pytorch
+  - pytorch::pytorch-cuda=12.1
+  - pip:
+      - accelerate
+      - tqdm
+      - requests
+      - -e ..[sc]
+      # Official UCE install: clone in the SLURM setup job, then pip install -r requirements.txt
+      # Prefer the repo checkout under cache/uce_workdir/UCE for eval_single_anndata.py.

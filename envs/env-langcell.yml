@@ -1,0 +1,34 @@
+# Isolated env for LangCell. Never mix with other embedders.
+#
+# LangCell's cell encoder is initialized from Geneformer and consumes Geneformer-tokenized
+# input, so this env also needs the Geneformer package (installed from the downloaded HF repo)
+# and pins the same transformers version.
+#
+# Note for interpretation: LangCell was pretrained against cell-identity *text*, so it has seen
+# cell-type semantics. It is flagged label_supervised=True and belongs in the supplementary
+# ranking alongside SCimilarity, not the zero-shot headline.
+name: scfm-irt-langcell
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.10
+  - pip
+  - numpy<2
+  - pandas
+  - scipy
+  - scanpy
+  - anndata
+  - pytorch::pytorch=2.1.*
+  - pytorch::pytorch-cuda=12.1
+  - pip:
+      - transformers==4.40.2
+      - datasets
+      - loompy
+      - tdigest
+      - mygene
+      - gdown
+      - tqdm
+      - -e ..[sc]
+      # Geneformer package (for the tokenizer):
+      #   pip install -e cache/geneformer_workdir/Geneformer --no-deps
+      # LangCell checkpoint modules:
+      #   python scripts/download_langcell_assets.py

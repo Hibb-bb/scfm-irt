@@ -1,0 +1,25 @@
+# Isolated env for scFoundation (xTrimoGene). Never mix with other embedders.
+#
+# The checkpoint (models.ckpt, ~1.6 GB) is distributed only via the authors' SharePoint link;
+# the Figshare and Hugging Face mirrors 404 (upstream issue #76). It must be staged manually:
+#   python scripts/download_scfoundation_assets.py   # prints the URL and validates the file
+name: scfm-irt-scfoundation
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.10
+  - pip
+  - numpy<2
+  - pandas
+  - scipy
+  - scanpy
+  - anndata
+  - pytorch::pytorch=2.1.*
+  - pytorch::pytorch-cuda=12.1
+  - pip:
+      - einops
+      - local_attention
+      - tqdm
+      - pyyaml
+      - -e ..[sc]
+      # The model code is used from the cloned repo, not pip:
+      #   cache/scfoundation_workdir/scFoundation/model/

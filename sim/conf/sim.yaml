@@ -1,0 +1,52 @@
+# Online benchmark-maintenance simulation (see docs/SIMULATION_PLAN.md)
+
+drift_mode: synthetic  # synthetic | real
+n_rounds: 15
+bank_budget: 400  # initial seed size only (ignored when seed_full_pool=true)
+seed_full_pool: true  # seed entire pool at round 0 (no gradual bank fill)
+k_ask: 22000  # query entire maintained bank each round (>= pool size)
+n_exp: 8
+kappa: 0  # no acquisition when full pool is seeded upfront
+tau: 1.0
+q: 0.05
+p0: 2.0
+p_star: 0.25
+retire_v: 0.01
+n_anchors: 15
+mu0: 0.0
+r: 0.12
+s: 1.0
+n_synthetic: 0  # no synthetic items when seed_full_pool=true
+seed: 0
+# Rollout report settings (see sim/run_rollout_report.py)
+rollout_n_rounds: 11
+rollout_datasets: [lung_atlas, pbmc3k, immune_human, human_thymus]
+start_at_first_model: true
+baseline_models: [dev_pca, dev_random]
+retire_v: 0.01  # used when retire_mode=v_threshold
+retire_cap: false
+# PI protocol: retire bottom X% of cells with lowest discrimination among top 50% models.
+retire_mode: bottom_pct_top_half  # v_threshold | bottom_pct_top_half
+retire_top_model_frac: 0.5
+retire_bottom_pct: 0.05
+equal_bank_size: false
+# Field drift (μ_oracle, μ̂) uses the top half of models by ability each round.
+field_window_top_frac: 0.5
+field_window_top_k: null
+
+# Geneformer v1→v2 upgrade case study at v2 release (disjoint cell pools).
+geneformer_upgrade: true
+geneformer_v1_model: geneformer
+geneformer_v2_model: geneformer_v2
+
+lung_run: runs/ranking_lung_atlas_v5
+pbmc_run: runs/ranking_pbmc3k_v3
+immune_run: runs/ranking_immune_human_v5
+human_thymus_run: runs/ranking_human_thymus_v1
+
+# Fig 3 sweep (optional)
+sweep_r: [0.08, 0.12, 0.16]
+sweep_kappa: [5, 10, 15, 25, 40]
+
+# Optional bank-budget sensitivity (tighter cap → more retirements)
+bank_budget_sweep: [50, 80, 100, 120, 200]

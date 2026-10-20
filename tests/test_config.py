@@ -11,7 +11,8 @@ import yaml
 
 from scfm_irt.config import RunConfig, load_config
 
-CONFIGS = ["annotation_irt_v1", "smoke_dev", "explanatory_v1"]
+CONFIGS = ["annotation_irt_v1", "smoke_dev", "explanatory_v1", "uce_pbmc3k_v1", "ranking_pbmc3k_v1"]
+
 
 
 @pytest.mark.parametrize("name", CONFIGS)

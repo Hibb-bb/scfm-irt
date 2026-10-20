@@ -10,7 +10,7 @@ split:
   scheme: cross_donor
   test_frac: 0.2
 
-embedders: [dev_pca, uce, scgpt, geneformer, cell_jepa]
+embedders: [dev_pca, uce, scgpt, geneformer]  # + scimilarity (supp.); cell_jepa when wired
 
 probe:
   penalty: l2

@@ -1,0 +1,62 @@
+datasets:
+  immune_human:
+    citation: Immune human atlas (approx.; confirm from HCA portal if needed)
+    date_type: proxy
+    release_date: '2022-04-01'
+  lung_atlas:
+    citation: Sikkema et al., HLCA integrated atlas, Nature Medicine 2023
+    date_type: publication
+    release_date: '2023-06-08'
+  pbmc3k:
+    citation: Zheng et al., Nature Communications 2017 (10x PBMC 3k)
+    date_type: publication
+    release_date: '2017-01-16'
+lung_substudy_proxy:
+  end: '2023-05-01'
+  start: '2018-01-01'
+  strategy: evenly_spaced
+models:
+  cellplm:
+    citation: Wen et al., bioRxiv 2023.10.03.560734; ICLR 2024
+    date_type: publication
+    release_date: '2023-10-05'
+  dev_pca:
+    date_type: proxy
+    note: Classic PCA baseline; treated as always-available reference.
+    release_date: '2010-01-01'
+  dev_random:
+    date_type: proxy
+    note: Random baseline.
+    release_date: '2010-01-01'
+  geneformer:
+    citation: Theodoris et al., Nature 2023 (Geneformer V1)
+    date_type: publication
+    release_date: '2023-05-31'
+  geneformer_v2:
+    citation: Geneformer V2-104M; HF README Dec 2024; Chen et al. bioRxiv 2024.08.16
+    date_type: weights
+    release_date: '2024-12-01'
+  geneformer_v2_316m:
+    citation: Geneformer V2-316M; same generation as V2-104M
+    date_type: weights
+    release_date: '2024-12-01'
+  scgpt:
+    citation: Cui et al., Nature Methods 2024
+    date_type: publication
+    release_date: '2024-02-26'
+  scimilarity:
+    citation: Heimberg et al., Nature 2024
+    date_type: publication
+    release_date: '2024-11-20'
+  state:
+    citation: Arc Institute State / SE-600M; HF + arcinstitute.org/news Jun 23 2025
+    date_type: weights
+    release_date: '2025-06-23'
+  transcriptformer:
+    citation: TranscriptFormer TF-Sapiens; bioRxiv 2025.04.25.650731
+    date_type: publication
+    release_date: '2025-04-29'
+  uce:
+    citation: Rosen et al., bioRxiv 2023.11.28.568918
+    date_type: publication
+    release_date: '2023-11-29'

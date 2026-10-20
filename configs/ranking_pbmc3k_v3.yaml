@@ -1,0 +1,49 @@
+# pbmc3k smoke ranking: cheap end-to-end check that the new embedders produce usable caches.
+#
+# Not a headline result — pbmc3k is ~3k cells with a coarse label set, so ability estimates
+# here are noisy and the split is `stratified` rather than `cross_donor`. Its job is to catch
+# a broken embedder before it consumes a GPU day on lung_atlas.
+#
+# `loo_calibration` is off: it is expensive and only meaningful on the real run.
+run_name: ranking_pbmc3k_v3
+seed: 0
+
+datasets: [pbmc3k]
+
+split:
+  scheme: stratified
+  test_frac: 0.2
+
+embedders:
+  - dev_pca
+  - uce
+  - scgpt
+  - geneformer
+  - scimilarity
+  - geneformer_v2
+  - cellplm
+  # scfoundation excluded until models.ckpt is staged manually (same as lung v5)
+  - scprint
+  - scprint2
+  - transcriptformer
+  - langcell
+  - geneformer_v2_316m
+  - scprint_small_v1
+  - scprint_medium_v1
+  - scprint_large_v1
+  - state
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  n_steps: 2000
+  loo_calibration: false
+
+outputs_dir: runs
+cache_dir: cache/embeddings

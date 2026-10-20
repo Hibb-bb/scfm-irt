@@ -26,3 +26,7 @@ runs/
 .DS_Store
 .idea/
 .vscode/
+
+# per-model isolated venvs and job logs (rebuilt with scripts/setup_embedder_venv.sh)
+.venv-*/
+logs/

@@ -50,8 +50,152 @@ def _dev_random() -> CellEmbedder:
 register_embedder("dev_pca", _dev_pca)
 register_embedder("dev_random", _dev_random)
 
-# TODO(phase-5/6): register the real models, each behind a lazy factory and an isolated env.
-# Verify each loading API against its own repo at implementation time — these interfaces move.
-#   uce, scimilarity (both zero-shot; SCimilarity was trained with cell-type labels, so flag it
-#   as label-supervised when interpreting its ability), scgpt, geneformer, cellplm,
-#   scfoundation, cellfm, cell_jepa.
+
+def _uce() -> CellEmbedder:
+    from scfm_irt.embedders.uce import UCEEmbedder
+
+    return UCEEmbedder()
+
+
+register_embedder("uce", _uce)
+
+
+def _scgpt() -> CellEmbedder:
+    from scfm_irt.embedders.scgpt import SCGPTEmbedder
+
+    return SCGPTEmbedder()
+
+
+register_embedder("scgpt", _scgpt)
+
+
+def _geneformer() -> CellEmbedder:
+    from scfm_irt.embedders.geneformer import GeneformerEmbedder
+
+    return GeneformerEmbedder()
+
+
+register_embedder("geneformer", _geneformer)
+
+
+def _scimilarity() -> CellEmbedder:
+    from scfm_irt.embedders.scimilarity import SCimilarityEmbedder
+
+    return SCimilarityEmbedder()
+
+
+register_embedder("scimilarity", _scimilarity)
+
+
+def _cellplm() -> CellEmbedder:
+    from scfm_irt.embedders.cellplm import CellPLMEmbedder
+
+    return CellPLMEmbedder()
+
+
+register_embedder("cellplm", _cellplm)
+
+
+def _geneformer_v2() -> CellEmbedder:
+    from scfm_irt.embedders.geneformer import GeneformerV2Embedder
+
+    return GeneformerV2Embedder()
+
+
+# Separate entry from `geneformer` (V1-10M) on purpose: the pipeline uses the registry name as
+# the IRT model_id, so a shared name would merge two distinct models into one respondent.
+register_embedder("geneformer_v2", _geneformer_v2)
+
+
+def _geneformer_v2_316m() -> CellEmbedder:
+    from scfm_irt.embedders.geneformer import GeneformerV2_316MEmbedder
+
+    return GeneformerV2_316MEmbedder()
+
+
+register_embedder("geneformer_v2_316m", _geneformer_v2_316m)
+
+
+def _transcriptformer() -> CellEmbedder:
+    from scfm_irt.embedders.transcriptformer import TranscriptFormerEmbedder
+
+    return TranscriptFormerEmbedder()
+
+
+register_embedder("transcriptformer", _transcriptformer)
+
+
+def _scprint() -> CellEmbedder:
+    from scfm_irt.embedders.scprint import SCPRINTEmbedder
+
+    return SCPRINTEmbedder()
+
+
+register_embedder("scprint", _scprint)
+
+
+def _scprint2() -> CellEmbedder:
+    from scfm_irt.embedders.scprint import SCPRINT2Embedder
+
+    return SCPRINT2Embedder()
+
+
+register_embedder("scprint2", _scprint2)
+
+
+def _scprint_small_v1() -> CellEmbedder:
+    from scfm_irt.embedders.scprint import SCPRINTSmallV1Embedder
+
+    return SCPRINTSmallV1Embedder()
+
+
+def _scprint_medium_v1() -> CellEmbedder:
+    from scfm_irt.embedders.scprint import SCPRINTMediumV1Embedder
+
+    return SCPRINTMediumV1Embedder()
+
+
+def _scprint_large_v1() -> CellEmbedder:
+    from scfm_irt.embedders.scprint import SCPRINTLargeV1Embedder
+
+    return SCPRINTLargeV1Embedder()
+
+
+# The v1 size ladder. Same corpus and tokenizer at three capacities, so these are strongly
+# correlated respondents by construction — the point is the size comparison, not extra
+# independent evidence about item difficulty.
+register_embedder("scprint_small_v1", _scprint_small_v1)
+register_embedder("scprint_medium_v1", _scprint_medium_v1)
+register_embedder("scprint_large_v1", _scprint_large_v1)
+
+
+def _scfoundation() -> CellEmbedder:
+    from scfm_irt.embedders.scfoundation import SCFoundationEmbedder
+
+    return SCFoundationEmbedder()
+
+
+register_embedder("scfoundation", _scfoundation)
+
+
+def _langcell() -> CellEmbedder:
+    from scfm_irt.embedders.langcell import LangCellEmbedder
+
+    return LangCellEmbedder()
+
+
+# Pretrained against cell-identity text, so `label_supervised=True` — supplementary ranking
+# only, alongside scimilarity.
+register_embedder("langcell", _langcell)
+
+
+def _state() -> CellEmbedder:
+    from scfm_irt.embedders.state import StateEmbedder
+
+    return StateEmbedder()
+
+
+register_embedder("state", _state)
+
+# cell_jepa: in-house model — not yet wired (no checkpoint / embedder code in repo).
+# TODO(phase-6): register once Cell-JEPA inference path is available.

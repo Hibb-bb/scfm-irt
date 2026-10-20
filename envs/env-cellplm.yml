@@ -1,0 +1,24 @@
+# Isolated env for CellPLM. Never mix with other embedders.
+#
+# CellPLM pins old versions of several deps that fight the torch stack, so on Quest it is
+# installed with --no-deps as a fallback (see scripts/setup_embedder_venv.sh cellplm).
+name: scfm-irt-cellplm
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scanpy
+  - anndata
+  - pytorch::pytorch=2.1.*
+  - pytorch::pytorch-cuda=12.1
+  - pip:
+      - cellplm
+      - hdf5plugin
+      - tqdm
+      - pyyaml
+      - -e ..[sc]
+      # Checkpoint (pretrain_prefix 20230926_85M) comes from:
+      #   python scripts/download_cellplm_assets.py

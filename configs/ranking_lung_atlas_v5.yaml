@@ -1,0 +1,45 @@
+# lung_atlas ranking v5: v4 embedders + scprint family + langcell.
+# scfoundation still excluded until models.ckpt is staged manually.
+run_name: ranking_lung_atlas_v5
+seed: 0
+
+datasets: [lung_atlas]
+
+split:
+  scheme: cross_donor
+  test_frac: 0.2
+
+embedders:
+  - dev_pca
+  - dev_random
+  - uce
+  - scgpt
+  - geneformer
+  - scimilarity
+  - geneformer_v2
+  - cellplm
+  - transcriptformer
+  - geneformer_v2_316m
+  - state
+  - scprint
+  - scprint2
+  - scprint_small_v1
+  - scprint_medium_v1
+  - scprint_large_v1
+  - langcell
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  n_steps: 2000
+  loo_calibration: true
+  loo_n_steps: 400
+
+outputs_dir: runs
+cache_dir: cache/embeddings

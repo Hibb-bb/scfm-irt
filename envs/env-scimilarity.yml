@@ -1,0 +1,16 @@
+# Isolated env for SCimilarity (label-supervised; supplementary ranking only).
+name: scfm-irt-scimilarity
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scanpy
+  - anndata
+  - pip:
+      - scimilarity
+      - tqdm
+      - pyyaml
+      - -e ..[sc]

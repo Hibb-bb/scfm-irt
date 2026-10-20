@@ -1,0 +1,58 @@
+# Headline ranking: every model with a lung_atlas cache, ~17 respondents instead of v2's 6.
+#
+# Respondent count is the binding constraint on this analysis. MATH.md section 10 notes that a
+# handful of respondents leaves item parameters weakly identified, so the jump from 6 to ~13 is
+# the point of this run, not the new models individually.
+#
+# Two of these were pretrained with cell-identity supervision (scimilarity on cell-type labels,
+# langcell on cell-identity text). Their ability estimates are not comparable to the zero-shot
+# models and the report treats them as supplementary.
+run_name: ranking_lung_atlas_v3
+seed: 0
+
+datasets: [lung_atlas]
+
+split:
+  scheme: cross_donor
+  test_frac: 0.2
+
+embedders:
+  # v2 baseline set
+  - dev_pca
+  - dev_random
+  - uce
+  - scgpt
+  - geneformer
+  - scimilarity
+  # added in v3
+  - geneformer_v2
+  - cellplm
+  - scfoundation
+  - scprint
+  - scprint2
+  - transcriptformer
+  - langcell
+  # Size-ladder variants. These are not independent respondents: each shares a tokenizer,
+  # corpus, and architecture with its siblings, so their errors correlate and they add less
+  # information about item difficulty than the raw count suggests. They are here to make
+  # capacity comparable within a family, holding everything else fixed.
+  - geneformer_v2_316m
+  - scprint_small_v1
+  - scprint_medium_v1
+  - scprint_large_v1
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  n_steps: 2000
+  loo_calibration: true
+  loo_n_steps: 400
+
+outputs_dir: runs
+cache_dir: cache/embeddings

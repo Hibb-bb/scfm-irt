@@ -1,0 +1,26 @@
+# Isolated env for TranscriptFormer (CZI). Never mix with other embedders.
+#
+# Two hard constraints from the upstream repo:
+#   - Python >= 3.11 (the only embedder here that cannot use 3.10)
+#   - torch <= 2.5.1; 2.6.0+ raises pickle errors loading the released checkpoints
+name: scfm-irt-transcriptformer
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scanpy
+  - anndata
+  - h5py
+  - pytorch::pytorch=2.5.1
+  - pytorch::pytorch-cuda=12.1
+  - pip:
+      - transcriptformer
+      - hydra-core
+      - lightning
+      - tqdm
+      - -e ..[sc]
+      # Weights (tf_sapiens) come from:
+      #   python scripts/download_transcriptformer_assets.py

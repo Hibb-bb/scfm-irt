@@ -1,0 +1,27 @@
+# Atlas ranking: HLCA lung subsample (50k cells), cross-donor split.
+# Requires: pip install cellxgene-census && python scripts/download_data.py --dataset lung_atlas
+run_name: ranking_lung_atlas_v1
+seed: 0
+
+datasets: [lung_atlas]
+
+split:
+  scheme: cross_donor
+  test_frac: 0.2
+
+embedders: [dev_pca, uce, scgpt, geneformer, scimilarity]
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  loo_calibration: true
+  loo_n_steps: 400
+
+outputs_dir: runs
+cache_dir: cache/embeddings

@@ -34,8 +34,30 @@ class DatasetSpec:
     expected_n_types: int | None = None
 
 
-# TODO(phase-0): fill in paths/urls and the expected dims from the project inventory.
+# TODO(phase-0): fill in urls and expected dims from the project inventory for real datasets.
 _REGISTRY: dict[str, DatasetSpec] = {
+    # Tiny synthetic set for the smoke path / CI. Created by scripts/make_smoke_data.py.
+    "smoke_toy": DatasetSpec(
+        name="smoke_toy",
+        path="data/raw/smoke_toy.h5ad",
+        label_key="celltype",
+        batch_key="batch",
+        donor_key="donor",
+        family="annotation",
+        expected_n_cells=400,
+        expected_n_types=5,
+        notes="Synthetic smoke fixture; not for scientific ranking.",
+    ),
+    # 10x PBMC 3k — first real annotation set (via scanpy.datasets).
+    "pbmc3k": DatasetSpec(
+        name="pbmc3k",
+        path="data/raw/pbmc3k.h5ad",
+        label_key="celltype",
+        batch_key="batch",
+        donor_key="donor",
+        family="annotation",
+        notes="scanpy pbmc3k + louvain labels; donors are synthetic partitions for splits.",
+    ),
     "zheng68k": DatasetSpec(
         name="zheng68k",
         path="data/raw/zheng68k.h5ad",
@@ -57,9 +79,12 @@ _REGISTRY: dict[str, DatasetSpec] = {
         path="data/raw/immune_human.h5ad",
         label_key="final_annotation",
         batch_key="batch",
-        donor_key="donor",
+        donor_key="sample_ID",
         family="atlas",
-        notes="scIB integration set; high class count, good difficulty spread.",
+        url="https://exampledata.scverse.org/scvi-tools/Immune_HVG_human.h5ad",
+        expected_n_cells=32484,
+        expected_n_types=16,
+        notes="scIB immune HVG subset (scverse mirror); cross-study batches, 16 types.",
     ),
     "lung_atlas": DatasetSpec(
         name="lung_atlas",
@@ -68,7 +93,34 @@ _REGISTRY: dict[str, DatasetSpec] = {
         batch_key="batch",
         donor_key="donor",
         family="atlas",
-        notes="~50 cell types; a priority source of hard items.",
+        notes="HLCA core (~585k cells). Run download_data.py --dataset lung_atlas (subsampled to 50k).",
+    ),
+    "oasis": DatasetSpec(
+        name="oasis",
+        path="data/raw/oasis.h5ad",
+        label_key="cell_type",
+        batch_key="batch",
+        donor_key="donor",
+        family="atlas",
+        notes=(
+            "OASIS (Osaka Atlas of Immune Cells); Edahiro et al. Nat Genet 2025. "
+            "Controlled access via NBDC hum0197 / JGA JGAS000783. "
+            "Stage an author-provided or NBDC-downloaded h5ad at data/staging/oasis*.h5ad "
+            "or set OASIS_H5AD_PATH, then run download_data.py --dataset oasis "
+            "(subsampled to 50k, 28 L2 cell types)."
+        ),
+    ),
+    "human_thymus": DatasetSpec(
+        name="human_thymus",
+        path="data/raw/human_thymus.h5ad",
+        label_key="cell_type",
+        batch_key="batch",
+        donor_key="donor",
+        family="atlas",
+        notes=(
+            "Developing human thymus spatial atlas (Yayon et al. Nature 2024). "
+            "CELLxGENE Census dataset 29244e1d-…; download_data.py subsamples 50k cells."
+        ),
     ),
 }
 

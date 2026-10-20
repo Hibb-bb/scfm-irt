@@ -1,0 +1,82 @@
+# Release / publication dates for online benchmark-maintenance simulation.
+# Sources documented in sim/data/DATES.md (web search + paper metadata, Aug 2025).
+#
+# date_type:
+#   publication — peer-reviewed or widely cited preprint
+#   weights     — model checkpoint / weights release
+#   proxy       — ordered placeholder when per-study dates unavailable
+
+models:
+  dev_pca:
+    release_date: "2010-01-01"
+    date_type: proxy
+    note: "Classic PCA baseline; treated as always-available reference."
+  dev_random:
+    release_date: "2010-01-01"
+    date_type: proxy
+    note: "Random baseline."
+  geneformer:
+    release_date: "2023-05-31"
+    date_type: publication
+    citation: "Theodoris et al., Nature 2023 (Geneformer V1)"
+  uce:
+    release_date: "2023-11-29"
+    date_type: publication
+    citation: "Rosen et al., bioRxiv 2023.11.28.568918"
+  cellplm:
+    release_date: "2023-10-05"
+    date_type: publication
+    citation: "Wen et al., bioRxiv 2023.10.03.560734; ICLR 2024"
+  scgpt:
+    release_date: "2024-02-26"
+    date_type: publication
+    citation: "Cui et al., Nature Methods 2024"
+  scimilarity:
+    release_date: "2024-11-20"
+    date_type: publication
+    citation: "Heimberg et al., Nature 2024"
+  geneformer_v2:
+    release_date: "2024-12-01"
+    date_type: weights
+    citation: "Geneformer V2-104M; HF README Dec 2024; Chen et al. bioRxiv 2024.08.16"
+  geneformer_v2_316m:
+    release_date: "2024-12-01"
+    date_type: weights
+    citation: "Geneformer V2-316M; same generation as V2-104M"
+  transcriptformer:
+    release_date: "2025-04-29"
+    date_type: publication
+    citation: "TranscriptFormer TF-Sapiens; bioRxiv 2025.04.25.650731"
+  state:
+    release_date: "2025-06-23"
+    date_type: weights
+    citation: "Arc Institute State / SE-600M; HF weights + arcinstitute.org/news Jun 23 2025; preprint bioRxiv 2025.06.26.661135"
+
+datasets:
+  pbmc3k:
+    release_date: "2017-01-16"
+    date_type: publication
+    citation: "Zheng et al., Nature Communications 2017 (10x PBMC 3k)"
+  lung_atlas:
+    release_date: "2023-06-08"
+    date_type: publication
+    citation: "Sikkema et al., HLCA integrated atlas, Nature Medicine 2023"
+  immune_human:
+    release_date: "2022-04-01"
+    date_type: proxy
+    citation: "Immune human atlas (approx.; confirm from HCA portal if needed)"
+  oasis:
+    release_date: "2025-07-28"
+    date_type: publication
+    citation: "Edahiro et al., OASIS atlas, Nature Genetics 2025; doi:10.1038/s41588-025-02266-3"
+  human_thymus:
+    release_date: "2024-11-20"
+    date_type: publication
+    citation: "Yayon et al., spatial human thymus atlas, Nature 2024; doi:10.1038/s41586-024-07944-6"
+
+# Lung sub-studies: dataset_id UUID -> proxy release date (evenly spaced 2018–2023).
+# Replace with curated GEO/publication dates when available.
+lung_substudy_proxy:
+  strategy: evenly_spaced
+  start: "2018-01-01"
+  end: "2023-05-01"

@@ -1,0 +1,25 @@
+# Interim ranking if scGPT cache is not ready yet: DevEmbedder + UCE + Geneformer.
+run_name: ranking_pbmc3k_geneformer_interim
+seed: 0
+
+datasets: [pbmc3k]
+
+split:
+  scheme: stratified
+  test_frac: 0.2
+
+embedders: [dev_pca, uce, geneformer]
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  n_steps: 1500
+
+outputs_dir: runs
+cache_dir: cache/embeddings

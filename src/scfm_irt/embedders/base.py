@@ -62,6 +62,13 @@ class EmbeddingArtifact:
         return hashlib.sha256(payload).hexdigest()[:16]
 
 
+def artifact_paths(cache_dir: str | Path, meta: EmbeddingArtifact) -> tuple[Path, Path]:
+    """Return `(npz_path, sidecar_path)` for a cache entry."""
+    root = Path(cache_dir) / meta.embedder / meta.dataset
+    key = meta.cache_key()
+    return root / f"{key}.npz", root / f"{key}.json"
+
+
 def save_embedding(
     path: str | Path,
     embedding: np.ndarray,
@@ -73,7 +80,58 @@ def save_embedding(
     Cell ids are stored *with* the matrix so row alignment survives caching — an embedding
     without its ids is unusable, not merely inconvenient.
     """
-    raise NotImplementedError("TODO(phase-5): npz/h5 write + .json sidecar")
+    if embedding.ndim != 2:
+        raise ValueError(f"embedding must be 2D, got shape {embedding.shape}")
+    if embedding.shape[0] != len(cell_ids):
+        raise ValueError(
+            f"row mismatch: embedding has {embedding.shape[0]} rows, {len(cell_ids)} cell ids"
+        )
+    if len(np.unique(cell_ids)) != len(cell_ids):
+        raise ValueError("cell_ids must be unique")
+    if embedding.shape != (meta.n_cells, meta.dim):
+        raise ValueError(
+            f"meta says ({meta.n_cells}, {meta.dim}) but embedding is {embedding.shape}"
+        )
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sidecar = path.with_suffix(".json")
+
+    # dtype=U keeps ids as a unicode array so np.load(..., allow_pickle=False) works.
+    np.savez_compressed(
+        path,
+        embedding=np.asarray(embedding, dtype=np.float32),
+        cell_ids=np.asarray(cell_ids, dtype="U"),
+    )
+    sidecar.write_text(json.dumps(asdict(meta), indent=2, sort_keys=True) + "\n")
+
+
+def align_embedding_rows(
+    embedding: np.ndarray,
+    got_ids: np.ndarray,
+    want_ids: np.ndarray,
+    model_name: str = "embedder",
+) -> np.ndarray:
+    """Reorder `embedding` from `got_ids` onto `want_ids`.
+
+    Several models shuffle cells (batched dataloaders) or drop them (QC filters, empty
+    tokenizations) and hand back rows in their own order. Silently accepting that order is the
+    same class of bug as a transposed response matrix: everything still runs, and every number
+    afterwards is wrong. So realign by id and refuse to guess when a cell is missing.
+    """
+    got = [str(c) for c in got_ids]
+    want = [str(c) for c in want_ids]
+    if embedding.shape[0] == len(want) and got == want:
+        return embedding
+
+    position = {cid: i for i, cid in enumerate(got)}
+    missing = [cid for cid in want if cid not in position]
+    if missing:
+        raise RuntimeError(
+            f"{model_name} returned no embedding for {len(missing)}/{len(want)} cells "
+            f"(e.g. {missing[:5]}); cannot align to the response matrix."
+        )
+    return embedding[[position[cid] for cid in want]]
 
 
 def load_embedding(path: str | Path) -> tuple[np.ndarray, np.ndarray, EmbeddingArtifact]:
@@ -81,4 +139,26 @@ def load_embedding(path: str | Path) -> tuple[np.ndarray, np.ndarray, EmbeddingA
 
     Must assert `embedding.shape[0] == len(cell_ids)` and that ids are unique.
     """
-    raise NotImplementedError("TODO(phase-5): read + validate alignment")
+    path = Path(path)
+    sidecar = path.with_suffix(".json")
+    if not path.exists():
+        raise FileNotFoundError(path)
+    if not sidecar.exists():
+        raise FileNotFoundError(f"missing provenance sidecar: {sidecar}")
+
+    raw = np.load(path, allow_pickle=False)
+    embedding = np.asarray(raw["embedding"])
+    cell_ids = np.asarray(raw["cell_ids"])
+    meta = EmbeddingArtifact(**json.loads(sidecar.read_text()))
+
+    if embedding.shape[0] != len(cell_ids):
+        raise ValueError(
+            f"corrupt artifact {path}: {embedding.shape[0]} rows vs {len(cell_ids)} ids"
+        )
+    if len(np.unique(cell_ids)) != len(cell_ids):
+        raise ValueError(f"corrupt artifact {path}: duplicate cell_ids")
+    if embedding.shape != (meta.n_cells, meta.dim):
+        raise ValueError(
+            f"corrupt artifact {path}: meta ({meta.n_cells}, {meta.dim}) vs {embedding.shape}"
+        )
+    return embedding, cell_ids, meta

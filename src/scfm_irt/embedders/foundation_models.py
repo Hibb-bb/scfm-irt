@@ -1,7 +1,9 @@
-"""Stubs for the real foundation models — one class each, all in their own environments.
+"""Stubs for foundation models that do not have a real implementation yet.
 
-They live in one file only while they are stubs; split into `uce.py`, `scgpt.py`,
-`geneformer.py`, `cell_jepa.py`, ... as each is actually implemented (Phase 5 onward).
+Every model that works lives in its own module (`uce.py`, `scgpt.py`, `geneformer.py`,
+`scimilarity.py`, `cellplm.py`, `scfoundation.py`, `scprint.py`, `transcriptformer.py`,
+`langcell.py`). What is left here is the shape a new one should take, plus the in-house model
+we cannot wire until there is a checkpoint.
 
 Three rules, each corresponding to a way this silently goes wrong:
 
@@ -36,45 +38,21 @@ class _FoundationEmbedder:
         self.device = device
 
     def preprocess(self, adata: AnnData):  # noqa: ANN201
-        raise NotImplementedError(f"TODO(phase-5): {self.name} official preprocessing")
+        raise NotImplementedError(f"{self.name}: official preprocessing not implemented")
 
     def fit(self, adata: AnnData) -> None:
         return None  # zero-shot
 
     def embed(self, adata: AnnData) -> np.ndarray:
-        raise NotImplementedError(f"TODO(phase-5): {self.name} forward pass -> (n_cells, d)")
-
-
-class UCEEmbedder(_FoundationEmbedder):
-    name = "uce"
-    env = "envs/env-uce.yml"
-
-
-class SCimilarityEmbedder(_FoundationEmbedder):
-    name = "scimilarity"
-    env = "envs/env-scimilarity.yml"
-    # Pretrained with cell-type labels, so its ability estimate is not comparable to the
-    # zero-shot models on equal footing. Surface this in the report.
-    label_supervised = True
-
-
-class SCGPTEmbedder(_FoundationEmbedder):
-    name = "scgpt"
-    env = "envs/env-scgpt.yml"
-
-
-class GeneformerEmbedder(_FoundationEmbedder):
-    name = "geneformer"
-    env = "envs/env-geneformer.yml"
-
-
-class CellPLMEmbedder(_FoundationEmbedder):
-    name = "cellplm"
-    env = "envs/env-cellplm.yml"
+        raise NotImplementedError(f"{self.name}: forward pass -> (n_cells, d) not implemented")
 
 
 class CellJEPAEmbedder(_FoundationEmbedder):
-    """The in-house model — the reason the rest of this exists."""
+    """The in-house model — the reason the rest of this exists.
+
+    Not registered: there is no checkpoint or inference path in the repo yet. See the
+    TODO(phase-6) marker in `registry.py`.
+    """
 
     name = "cell_jepa"
     env = "envs/env-cell-jepa.yml"

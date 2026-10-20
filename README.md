@@ -11,11 +11,10 @@ annotate.
 Full statistical spec: [docs/MATH.md](docs/MATH.md).
 Architecture, module contracts, and roadmap: [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md).
 
-> **Status: skeleton.** Module signatures, schemas, configs, and tests are in place; most
-> function bodies raise `NotImplementedError` and are marked `TODO(phase-N)` against the
-> roadmap in the implementation plan. What is implemented today: the IRT response-model
-> curves, the synthetic-data simulator, the response-table schema, and the `to_matrix` pivot
-> with its orientation assertion.
+> **Status: smoke path working.** Phases 0–3 and the `mle_autodiff` estimator are implemented.
+> The synthetic toy dataset + DevEmbedder path runs end-to-end (`configs/smoke_dev.yaml`,
+> `slurm/smoke_dev.slurm`). Real foundation-model embedders and the Bayesian (`py-irt`)
+> estimator are still TODO — see [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## The one boundary that matters
 
@@ -44,7 +43,21 @@ imports and the analysis path run without them.
 ## Quick start
 
 ```bash
-scfm-irt run --config configs/annotation_irt_v1.yaml
+# 1. install (analysis + scanpy for the smoke path)
+pip install -e ".[sc,dev]"
+
+# 2. build the tiny toy dataset, extract DevEmbedder caches, fit IRT
+python scripts/make_smoke_data.py
+python scripts/extract_embeddings.py --embedder dev_pca --dataset smoke_toy --split stratified --device cpu
+python scripts/extract_embeddings.py --embedder dev_random --dataset smoke_toy --split stratified --device cpu
+scfm-irt run --config configs/smoke_dev.yaml
+```
+
+Or on Quest:
+
+```bash
+mkdir -p logs
+sbatch slurm/smoke_dev.slurm
 ```
 
 A run is fully declared by its config — datasets, split scheme, embedders, probe settings, IRT
@@ -62,10 +75,11 @@ src/scfm_irt/
   irt/         response models, synthetic recovery, three estimators
   analysis/    ability / difficulty / information / Wright map / fit stats / report
 configs/       run configs (YAML)
-scripts/       download_data.py  extract_embeddings.py  run_pipeline.py
+scripts/       download_data.py  make_smoke_data.py  extract_embeddings.py  run_pipeline.py
 tests/         synthetic recovery, orientation, split leakage
+slurm/         smoke_dev.slurm  extract_embeddings.slurm  run_pipeline.slurm
 envs/          isolated conda envs — one per embedder
-docs/          MATH.md  IMPLEMENTATION_PLAN.md
+docs/          MATH.md  IMPLEMENTATION_PLAN.md  ROADMAP.md
 ```
 
 This uses a `src/` layout, with `configs/`, `scripts/`, and `tests/` at the repo root rather

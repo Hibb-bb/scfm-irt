@@ -1,0 +1,41 @@
+# lung_atlas ranking: all embedders with cached lung_atlas embeddings (incl. state).
+#
+# Drops scprint/scfoundation/langcell/scprint size-ladder variants until their caches land.
+# Same split and IRT settings as v3.
+run_name: ranking_lung_atlas_v4
+seed: 0
+
+datasets: [lung_atlas]
+
+split:
+  scheme: cross_donor
+  test_frac: 0.2
+
+embedders:
+  - dev_pca
+  - dev_random
+  - uce
+  - scgpt
+  - geneformer
+  - scimilarity
+  - geneformer_v2
+  - cellplm
+  - transcriptformer
+  - geneformer_v2_316m
+  - state
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  n_steps: 2000
+  loo_calibration: true
+  loo_n_steps: 400
+
+outputs_dir: runs
+cache_dir: cache/embeddings

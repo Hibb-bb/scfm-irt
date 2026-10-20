@@ -1,0 +1,26 @@
+# Supplementary 5-model ranking — SCimilarity requires full transcriptome (≥5k genes).
+# immune_human is HVG-only (2k genes) so this config is for pbmc3k/lung_atlas only.
+run_name: ranking_immune_human_scimilarity_v1
+seed: 0
+
+datasets: [immune_human]
+
+split:
+  scheme: cross_donor
+  test_frac: 0.2
+
+embedders: [dev_pca, uce, scgpt, geneformer, scimilarity]
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  n_steps: 2000
+
+outputs_dir: runs
+cache_dir: cache/embeddings

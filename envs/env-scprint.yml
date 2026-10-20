@@ -1,0 +1,30 @@
+# Isolated env for scPRINT and scPRINT-2. Never mix with other embedders.
+#
+# scPRINT needs a lamindb instance populated with ontologies before inference. That step is
+# network-bound and must run on a login node, not inside a batch job:
+#   lamin init --storage cache/scprint_workdir/lamindb --name scfm_irt --modules bionty
+#   python -c "from scdataloader.utils import populate_my_ontology; populate_my_ontology()"
+#
+# On RHEL7 the stdlib sqlite3 is too old for lamindb; install pysqlite3-binary and shim it via
+# sitecustomize.py (upstream FAQ). scripts/setup_embedder_venv.sh does this automatically.
+name: scfm-irt-scprint
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scanpy
+  - anndata
+  - pytorch::pytorch=2.5.*
+  - pytorch::pytorch-cuda=12.1
+  - pip:
+      - scprint
+      - scprint2
+      - pysqlite3-binary>=0.5.2
+      - huggingface_hub
+      - tqdm
+      - -e ..[sc]
+      # Checkpoints (medium-v1.5.ckpt, small-v2.ckpt) come from:
+      #   python scripts/download_scprint_assets.py

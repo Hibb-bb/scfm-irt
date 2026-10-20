@@ -1,0 +1,44 @@
+# immune_human ranking v5: same embedder set as lung v5 (no scfoundation).
+run_name: ranking_immune_human_v5
+seed: 0
+
+datasets: [immune_human]
+
+split:
+  scheme: cross_donor
+  test_frac: 0.2
+
+embedders:
+  - dev_pca
+  - dev_random
+  - uce
+  - scgpt
+  - geneformer
+  # scimilarity excluded: immune_human is 2k-HVG; SCimilarity needs >=5000 gene overlap
+  - geneformer_v2
+  - cellplm
+  # transcriptformer excluded: immune_human is 2k-HVG; Ensembl mapping fails (0/2000 genes)
+  - geneformer_v2_316m
+  - state
+  - scprint
+  - scprint2
+  - scprint_small_v1
+  - scprint_medium_v1
+  - scprint_large_v1
+  - langcell
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  n_steps: 2000
+  loo_calibration: true
+  loo_n_steps: 400
+
+outputs_dir: runs
+cache_dir: cache/embeddings

@@ -1,0 +1,15 @@
+# Isolated env for Arc Institute State (SE-600M). Never mix with other embedders.
+#
+# Hard constraints from arc-state:
+#   - Python >= 3.11, < 3.13
+#   - torch >= 2.7, numpy >= 2.2
+name: scfm-irt-state
+channels: [conda-forge, pytorch, nvidia]
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - arc-state
+      - -e ..[sc]
+      # Weights (SE-600M) come from:
+      #   python scripts/download_state_assets.py

@@ -1,0 +1,31 @@
+# Smoke evaluation for Arc Institute State (SE-600M) on pbmc3k.
+#
+# Uses the same stratified split as ranking_pbmc3k_v3. dev_pca is included as a cheap
+# baseline so the report has a reference point even when other model caches are missing.
+run_name: ranking_pbmc3k_state
+seed: 0
+
+datasets: [pbmc3k]
+
+split:
+  scheme: stratified
+  test_frac: 0.2
+
+embedders:
+  - dev_pca
+  - state
+
+probe:
+  penalty: l2
+  C: null
+  max_iter: 1000
+
+irt:
+  model: 1pl
+  method: bayes_variational
+  item_granularity: cell
+  n_steps: 1500
+  loo_calibration: false
+
+outputs_dir: runs
+cache_dir: cache/embeddings
