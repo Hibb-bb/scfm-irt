@@ -51,6 +51,17 @@ class CellPLMEmbedder:
             del out.obsm[key]
         if "gene_name" not in out.var.columns:
             out.var["gene_name"] = out.var_names.astype(str)
+        # CellPLM's gene list is Ensembl ids and its symbol auto-conversion matches very few genes
+        # (23 of 20k on a PBMC panel); index by the Ensembl column when the dataset carries one.
+        ens = None
+        for col in ("ensembl_id", "feature_id", "gene_ids", "gene_id"):
+            if col in out.var.columns and out.var[col].astype(str).str.startswith("ENSG").mean() > 0.5:
+                ens = out.var[col].astype(str).str.split(".").str[0]
+                break
+        if ens is not None and not out.var_names.astype(str).str.startswith("ENSG").mean() > 0.5:
+            out.var["symbol"] = out.var_names.astype(str)
+            out.var_names = ens.values
+            out.var_names_make_unique()
         return out
 
     def fit(self, adata: AnnData) -> None:
