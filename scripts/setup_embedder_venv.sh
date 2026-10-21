@@ -408,6 +408,35 @@ setup_langcell() {
   echo "[setup-langcell] ok"
 }
 
+uce_healthy() {
+  [[ -x "$REPO_ROOT/.venv-uce/bin/python" ]] || return 1
+  "$REPO_ROOT/.venv-uce/bin/python" - <<'PY' >/dev/null 2>&1
+import torch, scanpy, accelerate  # noqa: F401  (the UCE driver imports accelerate at startup)
+import scfm_irt  # noqa: F401
+PY
+}
+
+setup_uce() {
+  local venv="$REPO_ROOT/.venv-uce"
+  if [[ "$FORCE" == "--force" ]] || ! uce_healthy; then
+    echo "[setup-uce] rebuilding $venv"
+    rm -rf "$venv"
+    "$PY310" -m venv "$venv"
+    # shellcheck disable=SC1091
+    source "$venv/bin/activate"
+    pip_retry install -U pip
+    pip_retry install torch torchvision --index-url https://download.pytorch.org/whl/cu121 || pip_retry install torch
+    pip_install_each numpy pandas scanpy anndata accelerate tqdm requests pyyaml
+    pip_retry install -e "$REPO_ROOT[sc]"
+    deactivate
+  else
+    echo "[setup-uce] already healthy"
+  fi
+  uce_healthy
+  date -Iseconds > "$venv/.setup_complete"
+  echo "[setup-uce] ok"
+}
+
 setup_state() {
   local venv="$REPO_ROOT/.venv-state"
   local py
@@ -441,19 +470,21 @@ case "$TARGET" in
   transcriptformer) setup_transcriptformer ;;
   langcell) setup_langcell ;;
   state) setup_state ;;
+  uce) setup_uce ;;
   all)
     setup_scgpt
     setup_geneformer
     setup_cellplm
     setup_transcriptformer
     setup_scprint
+    setup_uce
     # These two need assets fetched first, so a miss is a warning, not a hard failure.
     setup_langcell || echo "[warn] langcell setup skipped"
     setup_scfoundation || echo "[warn] scfoundation setup skipped"
     setup_state || echo "[warn] state setup skipped"
     ;;
   *)
-    echo "usage: $0 scgpt|geneformer|cellplm|scfoundation|scprint|transcriptformer|langcell|state|all [--force]"
+    echo "usage: $0 scgpt|geneformer|cellplm|scfoundation|scprint|transcriptformer|langcell|state|uce|all [--force]"
     exit 1
     ;;
 esac
