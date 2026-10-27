@@ -72,6 +72,9 @@ class TahoeX1Embedder:
                 SINGULARITYENV_PYTHONPATH=str(src),
                 SINGULARITYENV_HF_HOME=str(self.work_dir / "hf"),
                 SINGULARITYENV_HF_HUB_OFFLINE="1",
+                # $HOME is bind-mounted, so ~/.local site-packages (a host TensorFlow) would shadow
+                # the image's own packages; keep the container's interpreter on its own site dirs.
+                SINGULARITYENV_PYTHONNOUSERSITE="1",
             )
             cmd = [
                 # Quest's apptainer/1.1.9 module has no setuid starter and no squashfuse, so it
