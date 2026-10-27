@@ -199,3 +199,29 @@ register_embedder("state", _state)
 
 # cell_jepa: in-house model — not yet wired (no checkpoint / embedder code in repo).
 # TODO(phase-6): register once Cell-JEPA inference path is available.
+
+
+def _aidocell(size: str) -> Callable[[], CellEmbedder]:
+    def factory() -> CellEmbedder:
+        from scfm_irt.embedders.aidocell import AIDOCellEmbedder
+
+        return AIDOCellEmbedder(size=size)
+
+    return factory
+
+
+for _size in ("3M", "10M", "100M"):
+    register_embedder(f"aidocell_{_size.lower()}", _aidocell(_size))
+
+
+def _tahoex1(size: str) -> Callable[[], CellEmbedder]:
+    def factory() -> CellEmbedder:
+        from scfm_irt.embedders.tahoex1 import TahoeX1Embedder
+
+        return TahoeX1Embedder(size=size)
+
+    return factory
+
+
+for _size in ("70m", "1b"):
+    register_embedder(f"tahoex1_{_size}", _tahoex1(_size))
