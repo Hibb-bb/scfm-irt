@@ -13,4 +13,5 @@ export APPTAINER_CACHEDIR=$PWD/apptainer_cache APPTAINER_TMPDIR=$PWD/apptainer_t
 mkdir -p "$APPTAINER_CACHEDIR" "$APPTAINER_TMPDIR"
 apptainer pull --force sif/tahoe-x1_1.0.0.sif docker://ghcr.io/tahoebio/tahoe-x1:1.0.0
 ls -la sif/
-apptainer exec sif/tahoe-x1_1.0.0.sif python -c "import torch, flash_attn; print('torch', torch.__version__, 'flash', flash_attn.__version__)"
+module load singularity/default
+singularity exec --nv sif/tahoe-x1_1.0.0.sif python3.11 -c "import torch, flash_attn; print('torch', torch.__version__, 'flash', flash_attn.__version__)"

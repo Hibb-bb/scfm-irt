@@ -1,7 +1,7 @@
 """Tahoe-x1 (Tahoe Therapeutics), Apache-2.0, https://huggingface.co/tahoebio/Tahoe-x1.
 
 Tahoe-x1 only supports flash attention, and flash-attn's prebuilt wheels need glibc >= 2.32, newer
-than RHEL 8 on Quest. So the model runs from the upstream container image through Apptainer, and
+than RHEL 8 on Quest. So the model runs from the upstream container image through Singularity, and
 this adapter (which runs in a light venv with anndata only) shells out to
 `scripts/tahoex1_embed_inner.py` inside it, the same pattern as the TranscriptFormer CLI adapter.
 
@@ -69,15 +69,18 @@ class TahoeX1Embedder:
             write_h5ad_compat(prepared, tmp / "in.h5ad")
             env = dict(os.environ)
             env.update(
-                APPTAINERENV_PYTHONPATH=str(src),
-                APPTAINERENV_HF_HOME=str(self.work_dir / "hf"),
-                APPTAINERENV_HF_HUB_OFFLINE="1",
+                SINGULARITYENV_PYTHONPATH=str(src),
+                SINGULARITYENV_HF_HOME=str(self.work_dir / "hf"),
+                SINGULARITYENV_HF_HUB_OFFLINE="1",
             )
             cmd = [
-                "apptainer", "exec", "--nv", "--cleanenv",
+                # Quest's apptainer/1.1.9 module has no setuid starter and no squashfuse, so it
+                # cannot mount a SIF; the default singularity (3.8.1) can. The image's PyTorch
+                # lives in python3.11 (python3 is a bare 3.10).
+                "singularity", "exec", "--nv", "--cleanenv",
                 "--bind", f"{self.work_dir}:{self.work_dir}",
                 "--bind", f"{REPO}:{REPO}",
-                str(sif), "python", str(REPO / "scripts" / "tahoex1_embed_inner.py"),
+                str(sif), "python3.11", str(REPO / "scripts" / "tahoex1_embed_inner.py"),
                 "--h5ad", str(tmp / "in.h5ad"), "--size", self.size,
                 "--out", str(tmp / "emb.npy"), "--batch-size", str(self.batch_size),
             ]
